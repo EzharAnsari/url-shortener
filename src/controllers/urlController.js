@@ -1,5 +1,6 @@
 const pool = require("../db");
 const { encode } = require("../services/base62");
+const redisClient = require("../db/redis");
 
 exports.createShortUrl = async (req, res) => {
   try {
@@ -38,6 +39,14 @@ exports.redirectUrl = async (req, res) => {
   try {
     const { shortCode } = req.params;
 
+    // 1️⃣ Check Redis first
+    const cachedUrl = await redisClient.get(shortCode);
+
+    if (cachedUrl) {
+      return res.redirect(cachedUrl);
+    }
+
+    // 2️⃣ If not found in cache → DB
     const result = await pool.query(
       "SELECT long_url FROM urls WHERE short_code = $1",
       [shortCode]
@@ -47,7 +56,14 @@ exports.redirectUrl = async (req, res) => {
       return res.status(404).json({ error: "URL not found" });
     }
 
-    res.redirect(result.rows[0].long_url);
+    const longUrl = result.rows[0].long_url;
+
+    // 3️⃣ Cache it for 1 hour
+    await redisClient.set(shortCode, longUrl, {
+      EX: 3600
+    });
+
+    res.redirect(longUrl);
 
   } catch (err) {
     console.error(err);
