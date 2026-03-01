@@ -51,10 +51,13 @@ exports.redirectUrl = async (req, res) => {
     const cachedUrl = await redisClient.get(shortCode);
 
     if (cachedUrl) {
+      await redisClient.incr(`clicks:${shortCode}`);
+      /*
       await pool.query(
         "UPDATE urls SET click_count = click_count + 1 WHERE short_code = $1",
         [shortCode]
       );
+      */
 
       return res.redirect(cachedUrl);
     }

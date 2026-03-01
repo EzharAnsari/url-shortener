@@ -16,6 +16,8 @@ const PORT = process.env.PORT || 3000;
 async function startServer() {
   await initDatabase();  // 🔥 Auto-create tables
 
+  require("./workers/clickSync")
+
   app.listen(PORT, () => {
     console.log(`Server running on port ${PORT}`);
   });
