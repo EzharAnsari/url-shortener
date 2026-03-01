@@ -16,6 +16,7 @@
     "express-rate-limit": "^8.2.1",
     "jsonwebtoken": "^9.0.3",
     "pg": "^8.19.0",
+    "pino": "^10.3.1",
     "rate-limit-redis": "^4.3.1",
     "redis": "^5.11.0"
   },
