@@ -1,5 +1,6 @@
 const express = require("express");
 require("dotenv").config();
+const logger = require("./logger");
 
 const routes = require("./routes/urlRoutes");
 const initDatabase = require("./db/init")
@@ -19,7 +20,7 @@ async function startServer() {
   require("./workers/clickSync")
 
   app.listen(PORT, () => {
-    console.log(`Server running on port ${PORT}`);
+    logger.info(`Server running on port ${PORT}`);
   });
 }
 
