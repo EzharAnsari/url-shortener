@@ -3,9 +3,12 @@ require("dotenv").config();
 
 const routes = require("./routes/urlRoutes");
 const initDatabase = require("./db/init")
+const rateLimiter = require("./middleware/rateLimit")
 
 const app = express();
 app.use(express.json());
+app.use(rateLimiter);
+
 app.use("/", routes);
 
 const PORT = process.env.PORT || 3000;
